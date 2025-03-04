@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Index Manipulation</title>
+    <style>
+        .container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border: 2px solid black;
+            margin-top: 50px;
+        }
+        .box {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            text-align: center;
+            line-height: 200px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            border: 2px solid black;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="createBtn">Create Box</button>
+    <div class="container" id="container"></div>
+
+    <div class="controls" id="controls"></div>
+
+    <script>
+        let count = 0; // Box counter
+
+        document.getElementById("createBtn").addEventListener("click", function () {
+            if (count >= 3) return; // Allow only 3 boxes
+
+            const container = document.getElementById("container");
+            const controls = document.getElementById("controls");
+
+            // Create a new box
+            let box = document.createElement("div");
+            box.className = "box";
+            box.style.backgroundColor = ["red", "blueviolet", "green"][count]; // Assign color
+            box.style.top = `${20 + count * 40}px`;
+            box.style.left = `${20 + count * 40}px`;
+            box.style.zIndex = count + 1;
+            box.innerText = `Box ${count + 1} (z-index: ${count + 1})`;
+            box.setAttribute("data-id", count);
+
+            container.appendChild(box);
+
+            // Create control buttons
+            let btnContainer = document.createElement("div");
+            btnContainer.innerHTML = `
+                <span>Box ${count + 1}:</span>
+                <button onclick="increaseZ(${count})">↑</button>
+                <button onclick="decreaseZ(${count})">↓</button>
+                <span id="zIndexDisplay${count}"> z-index: ${count + 1} </span>
+            `;
+            controls.appendChild(btnContainer);
+
+            count++;
+        });
+
+        function increaseZ(id) {
+            let box = document.querySelector(`.box[data-id="${id}"]`);
+            box.style.zIndex = parseInt(box.style.zIndex) + 1;
+            updateDisplay(id, box.style.zIndex);
+        }
+
+        function decreaseZ(id) {
+            let box = document.querySelector(`.box[data-id="${id}"]`);
+            if (parseInt(box.style.zIndex) > 1) {
+                box.style.zIndex = parseInt(box.style.zIndex) - 1;
+                updateDisplay(id, box.style.zIndex);
+            }
+        }
+
+        function updateDisplay(id, value) {
+            document.getElementById(`zIndexDisplay${id}`).innerText = ` z-index: ${value} `;
+            document.querySelector(`.box[data-id="${id}"]`).innerText = `Box ${id + 1} (z-index: ${value})`;
+        }
+    </script>
+
+</body>
+</html>
